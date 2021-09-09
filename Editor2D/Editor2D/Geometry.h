@@ -13,9 +13,9 @@ struct IDrawable
 struct Point : public IDrawable
 {
 	D2D1_ELLIPSE ellipse;
-	const D2D1::ColorF color = D2D1::ColorF::Black;
-	const float rad = 4.0f;
-	const float gap = 10.0f;
+	D2D1::ColorF color = D2D1::ColorF::Black;
+	static constexpr float rad = 5.0f;
+	static constexpr float detection_gap = 10.0f;
 	Point(int x, int y)
 	{
 		ellipse.point.x = x;
@@ -23,13 +23,17 @@ struct Point : public IDrawable
 		ellipse.radiusX = ellipse.radiusY = rad;
 	}
 
+	void SetColor(D2D1::ColorF color) { this->color = color; }
 
 	void Draw(ID2D1RenderTarget* pRT, ID2D1SolidColorBrush* pBrush) override
 	{
 		pBrush->SetColor(color);
 		pRT->FillEllipse(ellipse, pBrush);
-		pBrush->SetColor(isSelected ? D2D1::ColorF(D2D1::ColorF::Red) : D2D1::ColorF(D2D1::ColorF::Black));
-		pRT->DrawEllipse(ellipse, pBrush, 2.0f);
+		if (isSelected)
+		{
+			pBrush->SetColor(D2D1::ColorF(D2D1::ColorF::Red));
+			pRT->DrawEllipse(ellipse, pBrush, 2.0f);
+		}
 	}
 
 	bool Selected(std::pair<int, int> mouse_pos) override
@@ -37,7 +41,7 @@ struct Point : public IDrawable
 		const float x1 = mouse_pos.first - ellipse.point.x;
 		const float y1 = mouse_pos.second - ellipse.point.y;
 		const float sqr_d = (x1 * x1) + (y1 * y1);
-		isSelected = (sqrt(sqr_d) <= (rad + gap));
+		isSelected = (sqrt(sqr_d) <= (rad + detection_gap));
 		return isSelected;
 	}
 	int getX() const
