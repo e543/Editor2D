@@ -29,7 +29,6 @@ private:
 	void MousePosChanged(std::pair<int, int> pos);
 
 	// Point stuff
-	void SetPoint();
 	void checkSelectedPoint();
 	std::shared_ptr<Point> getSelectedPoint();
 	std::shared_ptr<Point> addPoint(int x, int y);
@@ -38,8 +37,11 @@ private:
 	void addPoint(std::shared_ptr<Point> new_point);
 	void addLine(std::shared_ptr<Point> begin_point, std::shared_ptr<Point> end_point);
 	void addLine(int x1, int y1, int x2, int y2);
-	void addMainPoint(std::pair<int, int> mouse_pos);
-	void addSupPoint(std::pair<int, int> pos);
+	void addMainPoint();
+	void addMainPoint(std::shared_ptr<Point> new_main_point);
+	void addSupPoint();
+	void addSupPoint(std::shared_ptr<Point> new_sup_point);
+	void addMissingPoints();
 
 	// Making Line
 	void StartMakingLine();

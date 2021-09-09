@@ -5,22 +5,32 @@
 struct IDrawable
 {
 	virtual void Draw(ID2D1RenderTarget* pRT, ID2D1SolidColorBrush* pBrush) = 0;
-	bool isSelected;
-	virtual bool Selected(std::pair<int, int> mouse_pos) = 0;
 };
 
+struct ISelectable
+{
+	bool isSelected;
+	virtual bool Selected(std::pair<int, int> mouse_pos) = 0;
+	bool isLocked;
+	void Lock()		{ isLocked = true; }
+	bool OnLock()	{ return isLocked; }
+	void Unlock()	{ isLocked = false; }
+};
 
-struct Point : public IDrawable
+struct Point : public IDrawable, public ISelectable
 {
 	D2D1_ELLIPSE ellipse;
 	D2D1::ColorF color = D2D1::ColorF::Black;
 	static constexpr float rad = 5.0f;
 	static constexpr float detection_gap = 10.0f;
+	static constexpr float detection_rad = rad + detection_gap;
 	Point(int x, int y)
 	{
 		ellipse.point.x = x;
 		ellipse.point.y = y;
 		ellipse.radiusX = ellipse.radiusY = rad;
+		isLocked = false;
+		isSelected = false;
 	}
 
 	void SetColor(D2D1::ColorF color) { this->color = color; }
@@ -41,9 +51,11 @@ struct Point : public IDrawable
 		const float x1 = mouse_pos.first - ellipse.point.x;
 		const float y1 = mouse_pos.second - ellipse.point.y;
 		const float sqr_d = (x1 * x1) + (y1 * y1);
-		isSelected = (sqrt(sqr_d) <= (rad + detection_gap));
+		isSelected = (sqrt(sqr_d) <= detection_rad);
 		return isSelected;
 	}
+
+
 	int getX() const
 	{
 		return ellipse.point.x;
@@ -65,6 +77,10 @@ struct Point : public IDrawable
 		ellipse.point.x = pos.first;
 		ellipse.point.y = pos.second;
 	}
+	std::pair<int, int> GetPos()
+	{
+		return std::make_pair(ellipse.point.x, ellipse.point.y);
+	}
 };
 
 struct Line : public IDrawable
@@ -82,11 +98,6 @@ struct Line : public IDrawable
 		//pBrush->SetColor(isSelect ? D2D1::ColorF(D2D1::ColorF::White) : D2D1::ColorF(D2D1::ColorF::Black));
 
 		pRT->DrawLine(D2D1::Point2F(begin->getX(), begin->getY()), D2D1::Point2F(end->getX(), end->getY()), pBrush, 2.0f);
-	}
-
-	bool Selected(std::pair<int, int> mouse_pos) override
-	{
-		return false;
 	}
 
 	void SetBegin(std::shared_ptr<Point> new_begin)
@@ -197,10 +208,6 @@ struct Bezie : public IDrawable
 			xtemp = x;
 			ytemp = y;
 		}
-	}
-	bool Selected(std::pair<int, int> mouse_pos) override
-	{
-		return false;
 	}
 	inline int func(const float t, int p1, int p2, int p3, int p4)
 	{

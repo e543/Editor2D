@@ -58,16 +58,13 @@ void Application::HandleInput()
 		}
 		case Mouse::Event::Type::LPress:
 		{
+			if (points.empty())
+			{
+				gc.addPoint();
+			}
 			if (!gc.getSelectedPoint())
 			{
-				gc.SetPoint();
-			}
-			if (!gc.OnDrawingLine())
-			{
-				gc.StartDraggingPoint();
-			}
-			if (points.size() % 2 == 0 && points.size() > 2)
-			{
+				gc.addMissingPoints();
 				gc.MakeSpline();
 			}
 
