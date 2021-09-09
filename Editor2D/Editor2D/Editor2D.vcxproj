@@ -23,7 +23,6 @@
     <ClInclude Include="basewin.h" />
     <ClInclude Include="Geometry.h" />
     <ClInclude Include="GeometryController.h" />
-    <ClInclude Include="GeomteryController.h" />
     <ClInclude Include="Keyboard.h" />
     <ClInclude Include="Mouse.h" />
     <ClInclude Include="RenderResources.h" />
