@@ -12,7 +12,7 @@ public:
 	{
 		std::list<std::shared_ptr<Point>> points;
 		std::list<std::shared_ptr<Line>> lines;
-		std::list<std::shared_ptr<Spline>> splines;
+		std::list<std::shared_ptr<Bezie>> bezies;
 	};
 private:
 	RenderContext context;

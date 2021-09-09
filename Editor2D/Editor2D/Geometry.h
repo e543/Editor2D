@@ -164,7 +164,7 @@ struct Line : public IDrawable
 	}
 };
 
-struct Spline : public IDrawable
+struct Bezie : public IDrawable
 {
 	const D2D1::ColorF color = D2D1::ColorF::Red;
 
@@ -172,7 +172,7 @@ struct Spline : public IDrawable
 	static constexpr float N = 100.0f;
 	static constexpr float dt = 1 / N;
 
-	Spline(
+	Bezie(
 		std::shared_ptr<Point> P1,
 		std::shared_ptr<Point> P2,
 		std::shared_ptr<Point> P3,
@@ -211,3 +211,7 @@ struct Spline : public IDrawable
 	}
 };
 
+struct Spline
+{
+	
+};

@@ -38,7 +38,7 @@ void Application::HandleInput()
 	{
 		const auto& points = gc.context.points;
 		const auto& lines = gc.context.lines;
-		const auto& splines = gc.context.splines;
+		const auto& splines = gc.context.bezies;
 
 
 		switch (e->GetType())

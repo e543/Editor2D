@@ -99,7 +99,7 @@ void RenderResources::RenderThunk()
 		(*riter)->Draw(pRenderTarget, pBrush);
 
 	// Render splines
-	for (auto riter = context.splines.rbegin(); riter != context.splines.rend(); ++riter)
+	for (auto riter = context.bezies.rbegin(); riter != context.bezies.rend(); ++riter)
 		(*riter)->Draw(pRenderTarget, pBrush);
 
 	// Render points

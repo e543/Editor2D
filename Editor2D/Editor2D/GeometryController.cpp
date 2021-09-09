@@ -152,6 +152,6 @@ void GeometryController::addSpline(
 	std::shared_ptr<Point> P3,
 	std::shared_ptr<Point> P4)
 {
-	auto new_spline = std::make_shared<Spline>(P1, P2, P3, P4);
-	context.splines.emplace_back(new_spline);
+	auto new_spline = std::make_shared<Bezie>(P1, P2, P3, P4);
+	context.bezies.emplace_back(new_spline);
 }
