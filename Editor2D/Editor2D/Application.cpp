@@ -60,13 +60,13 @@ void Application::HandleInput()
 		{
 			if (!gc.getSelectedPoint())
 			{
-				gc.StartMakingLine();
+				gc.SetPoint();
 			}
 			if (!gc.OnDrawingLine())
 			{
 				gc.StartDraggingPoint();
 			}
-			if (points.size() % 3 == 1)
+			if (points.size() % 2 == 0 && points.size() > 2)
 			{
 				gc.MakeSpline();
 			}

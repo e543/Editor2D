@@ -15,11 +15,6 @@ std::shared_ptr<Point> GeometryController::getSelectedPoint()
 	return nullptr;
 }
 
-void GeometryController::SetPoint()
-{
-	addPoint(mouse_pos);
-	addSupPoint(mouse_pos);
-}
 
 void GeometryController::checkSelectedPoint()
 {
@@ -75,10 +70,26 @@ void GeometryController::addLine(int x1, int y1, int x2, int y2)
 	context.lines.emplace_back(new_line);
 }
 
+void GeometryController::addMainPoint(std::pair<int, int> pos)
+{
+	auto new_main_point = std::make_shared<Point>(pos.first, pos.second);
+	context.points.emplace_back(new_main_point);
+	main_points.emplace_back(new_main_point);
+}
 void GeometryController::addSupPoint(std::pair<int, int> pos)
 {
 	auto new_sup_point = std::make_shared<Point>(pos.first, pos.second);
-	context.sup_points.emplace_back(new_sup_point);
+	new_sup_point->SetColor(D2D1::ColorF::Blue);
+	context.points.emplace_back(new_sup_point);
+	sup_points.emplace_back(new_sup_point);
+}
+
+
+void GeometryController::SetPoint()
+{
+
+	addSupPoint(mouse_pos);
+	addMainPoint(mouse_pos);
 }
 
 void GeometryController::StartMakingLine()
@@ -151,11 +162,15 @@ void GeometryController::MakeSpline()
 	std::shared_ptr<Point>* ps = new std::shared_ptr<Point>[4];
 
 	size_t count = 0;
-	for (auto riter = context.points.rbegin(); count < 4; ++count, ++riter)
+	for (auto riter = main_points.rbegin(); count < 2; ++count, ++riter)
 	{
 		ps[count] = static_cast<std::shared_ptr<Point>>(*riter);
 	}
-	addSpline(ps[0], ps[1], ps[2], ps[3]);
+	for (auto riter = sup_points.rbegin(); count < 4; ++count, ++riter)
+	{
+		ps[count] = static_cast<std::shared_ptr<Point>>(*riter);
+	}
+	addSpline(ps[0], ps[2], ps[3], ps[1]);
 }
 
 void GeometryController::addSpline(
