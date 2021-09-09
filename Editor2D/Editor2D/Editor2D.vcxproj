@@ -18,6 +18,27 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Application.h" />
+    <ClInclude Include="basewin.h" />
+    <ClInclude Include="Geometry.h" />
+    <ClInclude Include="GeometryController.h" />
+    <ClInclude Include="GeomteryController.h" />
+    <ClInclude Include="Keyboard.h" />
+    <ClInclude Include="Mouse.h" />
+    <ClInclude Include="RenderResources.h" />
+    <ClInclude Include="RenderWindow.h" />
+    <ClInclude Include="Settings.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Application.cpp" />
+    <ClCompile Include="GeometryController.cpp" />
+    <ClCompile Include="Keyboard.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="Mouse.cpp" />
+    <ClCompile Include="RenderResources.cpp" />
+    <ClCompile Include="RenderWindow.cpp" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
@@ -142,26 +163,6 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClInclude Include="..\..\..\..\..\Documents\2DRenderer\Application.h" />
-    <ClInclude Include="..\..\..\..\..\Documents\2DRenderer\basewin.h" />
-    <ClInclude Include="..\..\..\..\..\Documents\2DRenderer\Geometry.h" />
-    <ClInclude Include="..\..\..\..\..\Documents\2DRenderer\GeometryController.h" />
-    <ClInclude Include="..\..\..\..\..\Documents\2DRenderer\Keyboard.h" />
-    <ClInclude Include="..\..\..\..\..\Documents\2DRenderer\Mouse.h" />
-    <ClInclude Include="..\..\..\..\..\Documents\2DRenderer\RenderResources.h" />
-    <ClInclude Include="..\..\..\..\..\Documents\2DRenderer\RenderWindow.h" />
-    <ClInclude Include="..\..\..\..\..\Documents\2DRenderer\resource.h" />
-    <ClInclude Include="..\..\..\..\..\Documents\2DRenderer\Settings.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="..\..\..\..\..\Documents\2DRenderer\Application.cpp" />
-    <ClCompile Include="..\..\..\..\..\Documents\2DRenderer\GeometryController.cpp" />
-    <ClCompile Include="..\..\..\..\..\Documents\2DRenderer\main.cpp" />
-    <ClCompile Include="..\..\..\..\..\Documents\2DRenderer\Mouse.cpp" />
-    <ClCompile Include="..\..\..\..\..\Documents\2DRenderer\RenderResources.cpp" />
-    <ClCompile Include="..\..\..\..\..\Documents\2DRenderer\RenderWindow.cpp" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
