@@ -11,6 +11,7 @@ public:
 	struct RenderContext
 	{
 		std::list<std::shared_ptr<Point>> points;
+		std::list<std::shared_ptr<Point>> sup_points;
 		std::list<std::shared_ptr<Line>> lines;
 		std::list<std::shared_ptr<Bezie>> bezies;
 	};
@@ -26,6 +27,7 @@ private:
 	void MousePosChanged(std::pair<int, int> pos);
 
 	// Point stuff
+	void SetPoint();
 	void checkSelectedPoint();
 	std::shared_ptr<Point> getSelectedPoint();
 	std::shared_ptr<Point> addPoint(int x, int y);
@@ -34,6 +36,7 @@ private:
 	void addPoint(std::shared_ptr<Point> new_point);
 	void addLine(std::shared_ptr<Point> begin_point, std::shared_ptr<Point> end_point);
 	void addLine(int x1, int y1, int x2, int y2);
+	void addSupPoint(std::pair<int, int> mouse_pos);
 
 	// Making Line
 	void StartMakingLine();

@@ -204,11 +204,6 @@ struct Bezie : public IDrawable
 		const float nt = (1.0f - t);
 		return nt * nt * nt * p1 + 3 * nt * nt * t * p2 + 3 * nt * t * t * p3 + t * t * t * p4;
 	}
-
-	inline void recalcSupPoints()
-	{
-
-	}
 };
 
 struct Spline

@@ -15,6 +15,12 @@ std::shared_ptr<Point> GeometryController::getSelectedPoint()
 	return nullptr;
 }
 
+void GeometryController::SetPoint()
+{
+	addPoint(mouse_pos);
+	addSupPoint(mouse_pos);
+}
+
 void GeometryController::checkSelectedPoint()
 {
 	std::shared_ptr<Point> selected_point = nullptr;
@@ -67,6 +73,12 @@ void GeometryController::addLine(int x1, int y1, int x2, int y2)
 	auto end_point = std::make_shared<Point>(x2, y2);
 	auto new_line = std::make_shared<Line>(begin_point, end_point);
 	context.lines.emplace_back(new_line);
+}
+
+void GeometryController::addSupPoint(std::pair<int, int> pos)
+{
+	auto new_sup_point = std::make_shared<Point>(pos.first, pos.second);
+	context.sup_points.emplace_back(new_sup_point);
 }
 
 void GeometryController::StartMakingLine()
