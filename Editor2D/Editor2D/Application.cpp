@@ -65,8 +65,11 @@ void Application::HandleInput()
 			}
 			if (!gc.getSelectedSupPoint() && !gc.getSelectedMainPoint())
 			{
-				gc.addMissingPoints();
-				gc.MakeSpline();
+				gc.addPoint();
+				if (!main_points.empty())
+				{
+					gc.MakeSpline();
+				}
 			}
 
 			gc.StartDraggingPoint();
