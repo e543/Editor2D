@@ -52,6 +52,7 @@ void GeometryController::checkSelectedMainPoint()
 void GeometryController::MousePosChanged(std::pair<int, int> pos)
 {
 	checkSelectedSupPoint();
+	checkSelectedMainPoint();
 	mouse_pos = pos;
 }
 
@@ -171,7 +172,8 @@ void GeometryController::StopDraggingPoint()
 
 void GeometryController::StartDraggingPoint()
 {
-	last_selected = getSelectedSupPoint();
+	auto selected = getSelectedSupPoint();
+	last_selected = selected ? selected : getSelectedMainPoint();
 	if (last_selected)
 	{
 		pointIsDragging = true;
