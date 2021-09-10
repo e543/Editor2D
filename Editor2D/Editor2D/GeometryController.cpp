@@ -4,10 +4,21 @@
 
 
 
-std::shared_ptr<Point> GeometryController::getSelectedPoint()
+std::shared_ptr<Point> GeometryController::getSelectedSupPoint()
 {
 	std::shared_ptr<Point> selected_point = nullptr;
-	for (auto iter = context.points.begin(); iter != context.points.end(); ++iter)
+	for (auto iter = context.sup_points.begin(); iter != context.sup_points.end(); ++iter)
+	{
+		if (!(*iter)->OnLock() && (*iter)->Selected(mouse_pos))
+			return static_cast<std::shared_ptr<Point>>(*iter);
+	}
+	return nullptr;
+}
+
+std::shared_ptr<Point> GeometryController::getSelectedMainPoint()
+{
+	std::shared_ptr<Point> selected_point = nullptr;
+	for (auto iter = context.main_points.begin(); iter != context.main_points.end(); ++iter)
 	{
 		if (!(*iter)->OnLock() && (*iter)->Selected(mouse_pos))
 			return static_cast<std::shared_ptr<Point>>(*iter);
@@ -16,10 +27,20 @@ std::shared_ptr<Point> GeometryController::getSelectedPoint()
 }
 
 
-void GeometryController::checkSelectedPoint()
+void GeometryController::checkSelectedSupPoint()
 {
 	std::shared_ptr<Point> selected_point = nullptr;
-	for (auto iter = context.points.begin(); iter != context.points.end(); ++iter)
+	for (auto iter = context.sup_points.begin(); iter != context.sup_points.end(); ++iter)
+	{
+		if (!(*iter)->OnLock())
+			(*iter)->Selected(mouse_pos);
+	}
+}
+
+void GeometryController::checkSelectedMainPoint()
+{
+	std::shared_ptr<Point> selected_point = nullptr;
+	for (auto iter = context.main_points.begin(); iter != context.main_points.end(); ++iter)
 	{
 		if (!(*iter)->OnLock())
 			(*iter)->Selected(mouse_pos);
@@ -30,7 +51,8 @@ void GeometryController::checkSelectedPoint()
 
 void GeometryController::MousePosChanged(std::pair<int, int> pos)
 {
-	checkSelectedPoint();
+	checkSelectedSupPoint();
+	checkSelectedMainPoint();
 	mouse_pos = pos;
 }
 
@@ -38,26 +60,22 @@ void GeometryController::MousePosChanged(std::pair<int, int> pos)
 std::shared_ptr<Point> GeometryController::addPoint(int x, int y)
 {
 	auto new_point = std::make_shared<Point>(x, y);
-	main_points.emplace_back(new_point);
-	context.points.emplace_back(new_point);
+	context.main_points.emplace_back(new_point);
 	return new_point;
 }
 void GeometryController::addPoint()
 {
 	auto new_point = std::make_shared<Point>(mouse_pos.first, mouse_pos.second);
-	main_points.emplace_back(new_point);
-	context.points.emplace_back(new_point);
+	context.main_points.emplace_back(new_point);
 }
 void GeometryController::addPoint(std::pair<int, int> pos)
 {
 	auto new_point = std::make_shared<Point>(pos.first, pos.second);
-	main_points.emplace_back(new_point);
-	context.points.emplace_back(new_point);
+	context.main_points.emplace_back(new_point);
 }
 void GeometryController::addPoint(std::shared_ptr<Point> new_point)
 {
-	main_points.emplace_back(new_point);
-	context.points.emplace_back(new_point);
+	context.main_points.emplace_back(new_point);
 }
 
 
@@ -78,42 +96,38 @@ void GeometryController::addLine(int x1, int y1, int x2, int y2)
 void GeometryController::addMainPoint()
 {
 	auto new_main_point = std::make_shared<Point>(mouse_pos.first, mouse_pos.second);
-	context.points.emplace_back(new_main_point);
-	main_points.emplace_back(new_main_point);
+	context.main_points.emplace_back(new_main_point);
 }
 
 void GeometryController::addMainPoint(std::shared_ptr<Point> new_main_point)
 {
-	context.points.emplace_back(new_main_point);
-	main_points.emplace_back(new_main_point);
+	context.main_points.emplace_back(new_main_point);
 }
 
 void GeometryController::addSupPoint()
 {
 	auto new_sup_point = std::make_shared<Point>(mouse_pos.first, mouse_pos.second);
 	new_sup_point->SetColor(D2D1::ColorF::Brown);
-	new_sup_point->Lock();
-	context.points.emplace_back(new_sup_point);
-	sup_points.emplace_back(new_sup_point);
+	//new_sup_point->Lock();
+	context.sup_points.emplace_back(new_sup_point);
 }
 
 void GeometryController::addSupPoint(std::shared_ptr<Point> new_sup_point)
 {
 	new_sup_point->SetColor(D2D1::ColorF::Brown);
-	new_sup_point->Lock();
-	context.points.emplace_back(new_sup_point);
-	sup_points.emplace_back(new_sup_point);
+	//new_sup_point->Lock();
+	context.sup_points.emplace_back(new_sup_point);
 }
 
 void GeometryController::addMissingPoints()
 {
 	auto point = std::make_shared<Point>(
-		context.points.back()->getX(), 
-		context.points.back()->getY());
+		context.main_points.back()->getX(), 
+		context.main_points.back()->getY());
 
 	addSupPoint(point);
-	addMainPoint();
 	addSupPoint();
+	addMainPoint();
 }
 
 
@@ -121,13 +135,13 @@ void GeometryController::addMissingPoints()
 void GeometryController::StartMakingLine()
 {
 	std::shared_ptr<Point> begin_point;
-	if (context.points.empty())
+	if (context.main_points.empty())
 	{
 		begin_point = std::make_shared<Point>(mouse_pos.first, mouse_pos.second);
 		addPoint(begin_point);
 	}
 	else
-		begin_point = context.points.back();
+		begin_point = context.main_points.back();
 
 	auto end_point = std::make_shared<Point>(mouse_pos.first, mouse_pos.second);
 
@@ -140,7 +154,7 @@ void GeometryController::StartMakingLine()
 void GeometryController::ResizeLine()
 {
 
-	auto point = context.points.back();
+	auto point = context.main_points.back();
 	point->SetPos(mouse_pos);
 	auto line = context.lines.back();
 	line->SetEnd(point);
@@ -158,7 +172,8 @@ void GeometryController::StopDraggingPoint()
 
 void GeometryController::StartDraggingPoint()
 {
-	last_selected = getSelectedPoint();
+	auto selected = getSelectedSupPoint();
+	last_selected = selected ? selected : getSelectedMainPoint();
 	if (last_selected)
 	{
 		pointIsDragging = true;
@@ -188,11 +203,11 @@ void GeometryController::MakeSpline()
 	std::shared_ptr<Point>* ps = new std::shared_ptr<Point>[4];
 
 	size_t count = 0;
-	for (auto riter = main_points.rbegin(); count < 2; ++count, ++riter)
+	for (auto riter = context.main_points.rbegin(); count < 2; ++count, ++riter)
 	{
 		ps[count] = static_cast<std::shared_ptr<Point>>(*riter);
 	}
-	for (auto riter = sup_points.rbegin(); count < 4; ++count, ++riter)
+	for (auto riter = context.sup_points.rbegin(); count < 4; ++count, ++riter)
 	{
 		ps[count] = static_cast<std::shared_ptr<Point>>(*riter);
 	}

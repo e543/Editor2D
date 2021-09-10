@@ -10,7 +10,8 @@ class GeometryController
 public:
 	struct RenderContext
 	{
-		std::list<std::shared_ptr<Point>> points;
+		std::list<std::shared_ptr<Point>> sup_points;
+		std::list<std::shared_ptr<Point>> main_points;
 		std::list<std::shared_ptr<Line>> lines;
 		std::list<std::shared_ptr<Bezie>> bezies;
 	};
@@ -22,15 +23,14 @@ private:
 	std::pair<int, int> mouse_pos;
 	std::shared_ptr<Point> last_selected;
 
-	std::list<std::shared_ptr<Point>> sup_points;
-	std::list<std::shared_ptr<Point>> main_points;
-
 	// Mouse stuff
 	void MousePosChanged(std::pair<int, int> pos);
 
 	// Point stuff
-	void checkSelectedPoint();
-	std::shared_ptr<Point> getSelectedPoint();
+	void checkSelectedSupPoint();
+	void checkSelectedMainPoint();
+	std::shared_ptr<Point> getSelectedSupPoint();
+	std::shared_ptr<Point> getSelectedMainPoint();
 	std::shared_ptr<Point> addPoint(int x, int y);
 	void addPoint();
 	void addPoint(std::pair<int, int> mouse_pos);
