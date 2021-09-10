@@ -37,11 +37,10 @@ private:
 	void addPoint(std::shared_ptr<Point> new_point);
 	void addLine(std::shared_ptr<Point> begin_point, std::shared_ptr<Point> end_point);
 	void addLine(int x1, int y1, int x2, int y2);
-	void addMainPoint();
+	std::shared_ptr<Point> addMainPoint();
 	void addMainPoint(std::shared_ptr<Point> new_main_point);
-	void addSupPoint();
+	std::shared_ptr<Point> addSupPoint();
 	void addSupPoint(std::shared_ptr<Point> new_sup_point);
-	void addMissingPoints();
 
 	// Making Line
 	void StartMakingLine();

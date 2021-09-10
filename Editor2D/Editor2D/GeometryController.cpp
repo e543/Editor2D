@@ -93,10 +93,11 @@ void GeometryController::addLine(int x1, int y1, int x2, int y2)
 	context.lines.emplace_back(new_line);
 }
 
-void GeometryController::addMainPoint()
+std::shared_ptr<Point> GeometryController::addMainPoint()
 {
 	auto new_main_point = std::make_shared<Point>(mouse_pos.first, mouse_pos.second);
 	context.main_points.emplace_back(new_main_point);
+	return new_main_point;
 }
 
 void GeometryController::addMainPoint(std::shared_ptr<Point> new_main_point)
@@ -104,12 +105,13 @@ void GeometryController::addMainPoint(std::shared_ptr<Point> new_main_point)
 	context.main_points.emplace_back(new_main_point);
 }
 
-void GeometryController::addSupPoint()
+std::shared_ptr<Point> GeometryController::addSupPoint()
 {
 	auto new_sup_point = std::make_shared<Point>(mouse_pos.first, mouse_pos.second);
 	new_sup_point->SetColor(D2D1::ColorF::Brown);
 	//new_sup_point->Lock();
 	context.sup_points.emplace_back(new_sup_point);
+	return new_sup_point;
 }
 
 void GeometryController::addSupPoint(std::shared_ptr<Point> new_sup_point)
@@ -117,17 +119,6 @@ void GeometryController::addSupPoint(std::shared_ptr<Point> new_sup_point)
 	new_sup_point->SetColor(D2D1::ColorF::Brown);
 	//new_sup_point->Lock();
 	context.sup_points.emplace_back(new_sup_point);
-}
-
-void GeometryController::addMissingPoints()
-{
-	auto point = std::make_shared<Point>(
-		context.main_points.back()->getX(), 
-		context.main_points.back()->getY());
-
-	addSupPoint(point);
-	addSupPoint();
-	addMainPoint();
 }
 
 
@@ -200,17 +191,21 @@ void GeometryController::dragPoint()
 
 void GeometryController::MakeSpline()
 {
-	std::shared_ptr<Point>* ps = new std::shared_ptr<Point>[4];
+	auto* ps = new std::shared_ptr<Point>[4];
 
 	size_t count = 0;
 	for (auto riter = context.main_points.rbegin(); count < 2; ++count, ++riter)
 	{
 		ps[count] = static_cast<std::shared_ptr<Point>>(*riter);
 	}
-	for (auto riter = context.sup_points.rbegin(); count < 4; ++count, ++riter)
-	{
-		ps[count] = static_cast<std::shared_ptr<Point>>(*riter);
-	}
+
+	auto ps00 = std::make_shared<Point>(ps[0]->getX(), ps[0]->getY());
+	auto ps11 = std::make_shared<Point>(ps[1]->getX(), ps[1]->getY());
+	addSupPoint(ps00);
+	ps[2] = ps00;
+	addSupPoint(ps11);
+	ps[3] = ps11;
+
 	addSpline(ps[0], ps[2], ps[3], ps[1]);
 }
 
