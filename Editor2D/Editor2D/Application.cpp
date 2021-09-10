@@ -36,7 +36,8 @@ void Application::HandleInput()
 {
 	while (const auto e = rwnd.mouse.Read())
 	{
-		const auto& points = gc.context.points;
+		const auto& sup_points = gc.context.sup_points;
+		const auto& main_points = gc.context.main_points;
 		const auto& lines = gc.context.lines;
 		const auto& splines = gc.context.bezies;
 
@@ -58,16 +59,17 @@ void Application::HandleInput()
 		}
 		case Mouse::Event::Type::LPress:
 		{
-			if (points.empty())
+			if (main_points.empty())
 			{
 				gc.addPoint();
 			}
-			if (!gc.getSelectedPoint())
+			if (!gc.getSelectedSupPoint() && !gc.getSelectedMainPoint())
 			{
 				gc.addMissingPoints();
 				gc.MakeSpline();
 			}
 
+			gc.StartDraggingPoint();
 			break;
 		}
 		case Mouse::Event::Type::LRelease:

@@ -95,15 +95,18 @@ void RenderResources::Render(GeometryController::RenderContext& context)
 void RenderResources::RenderThunk()
 {
 	// Render lines
-	for (auto riter = context.lines.rbegin(); riter != context.lines.rend(); ++riter)
-		(*riter)->Draw(pRenderTarget, pBrush);
+	for (auto iter = context.lines.begin(); iter != context.lines.end(); ++iter)
+		(*iter)->Draw(pRenderTarget, pBrush);
 
 	// Render splines
-	for (auto riter = context.bezies.rbegin(); riter != context.bezies.rend(); ++riter)
-		(*riter)->Draw(pRenderTarget, pBrush);
+	for (auto iter = context.bezies.begin(); iter != context.bezies.end(); ++iter)
+		(*iter)->Draw(pRenderTarget, pBrush);
 
-	// Render points
-	for (auto riter = context.points.rbegin(); riter != context.points.rend(); ++riter)
-		(*riter)->Draw(pRenderTarget, pBrush);
+	// Render main_points
+	for (auto iter = context.main_points.begin(); iter != context.main_points.end(); ++iter)
+		(*iter)->Draw(pRenderTarget, pBrush);
 
+	// Render sup_points
+	for (auto iter = context.sup_points.begin(); iter != context.sup_points.end(); ++iter)
+		(*iter)->Draw(pRenderTarget, pBrush);
 }
