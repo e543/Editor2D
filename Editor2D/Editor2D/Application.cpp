@@ -2,16 +2,11 @@
 
 Application::Application()
 {
-	if (!rwnd.Create(L"Test render window", WS_OVERLAPPEDWINDOW))
+	if (!rwnd.Create(L"Bezier spline graphic editor", WS_OVERLAPPEDWINDOW))
 	{
 		Application::~Application();
 	}
 	ShowWindow(rwnd.Window(), SW_SHOWDEFAULT);
-}
-
-Application::~Application()
-{
-
 }
 
 
@@ -39,7 +34,7 @@ void Application::HandleInput()
 		const auto& sup_points = gc.context.sup_points;
 		const auto& main_points = gc.context.main_points;
 		const auto& lines = gc.context.lines;
-		const auto& splines = gc.context.bezies;
+		const auto& splines = gc.context.beziers;
 
 
 		switch (e->GetType())

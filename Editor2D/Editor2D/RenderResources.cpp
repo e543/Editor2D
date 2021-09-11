@@ -99,7 +99,7 @@ void RenderResources::RenderThunk()
 		(*iter)->Draw(pRenderTarget, pBrush);
 
 	// Render splines
-	for (auto iter = context.bezies.begin(); iter != context.bezies.end(); ++iter)
+	for (auto iter = context.beziers.begin(); iter != context.beziers.end(); ++iter)
 		(*iter)->Draw(pRenderTarget, pBrush);
 
 	// Render sup_points

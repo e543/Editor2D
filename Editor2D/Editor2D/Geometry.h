@@ -229,7 +229,7 @@ struct Line : public IDrawable
 	}
 };
 
-struct Bezie : public IDrawable
+struct Bezier : public IDrawable
 {
 	const D2D1::ColorF color = D2D1::ColorF::Red;
 
@@ -237,7 +237,7 @@ struct Bezie : public IDrawable
 	static constexpr float N = 100.0f;
 	static constexpr float dt = 1 / N;
 
-	Bezie(
+	Bezier(
 		std::shared_ptr<Point> P1,
 		std::shared_ptr<Point> P2,
 		std::shared_ptr<Point> P3,
@@ -251,15 +251,15 @@ struct Bezie : public IDrawable
 
 		for (float t = dt; t < 1.0f; t += dt)
 		{
-			float x = bezie(t, P1->getX(), P2->getX(), P3->getX(), P4->getX());
-			float y = bezie(t, P1->getY(), P2->getY(), P3->getY(), P4->getY());
+			float x = bezier(t, P1->getX(), P2->getX(), P3->getX(), P4->getX());
+			float y = bezier(t, P1->getY(), P2->getY(), P3->getY(), P4->getY());
 			pRT->DrawLine(D2D1::Point2F(xtemp, ytemp), D2D1::Point2F(x, y), pBrush, 2.0f);
 
 			xtemp = x;
 			ytemp = y;
 		}
 	}
-	static inline int bezie(const float t, int p1, int p2, int p3, int p4)
+	static inline int bezier(const float t, int p1, int p2, int p3, int p4)
 	{
 
 		// --------------------------------------------------------------------
@@ -270,7 +270,7 @@ struct Bezie : public IDrawable
 		const float nt = (1.0f - t);
 		return nt * nt * nt * p1 + 3 * nt * nt * t * p2 + 3 * nt * t * t * p3 + t * t * t * p4;
 	}
-	static float bezieDer2(const float t, int p1, int p2, int p3, int p4)
+	static float bezierDer2(const float t, int p1, int p2, int p3, int p4)
 	{
 
 		// --------------------------------------------------------------------
@@ -295,14 +295,14 @@ public:
 private:
 	Node::Type type;
 	std::shared_ptr<Point> main, sup1, sup2;
-	std::shared_ptr<Point> last,next;
+	std::shared_ptr<Node> last,next;
 	std::shared_ptr<Line> sup_line = nullptr;
 public:
 	Node(
 		Node::Type type,
 		std::shared_ptr<Point> main,
 		std::shared_ptr<Point> sup1 = nullptr,
-		std::shared_ptr<Point> last = nullptr):
+		std::shared_ptr<Node> last = nullptr):
 		type(type),
 		main(main),
 		sup1(sup1),
@@ -316,9 +316,9 @@ public:
 	{
 		return type;
 	}
-	void bindSecond(std::shared_ptr<Point> second)
+	void bindNext(std::shared_ptr<Node> next)
 	{
-		this->next = second;
+		this->next = next;
 	}
 	std::shared_ptr<Point>  getMain() const
 	{
@@ -340,13 +340,9 @@ public:
 	{
 		this->sup2 = sup2;
 	}
-	void setLast(std::shared_ptr<Point> new_last)
+	void setLast(std::shared_ptr<Node> new_last)
 	{
 		last = new_last;
-	}
-	void setNext(std::shared_ptr<Point> new_next)
-	{
-		next = new_next;
 	}
 
 	std::shared_ptr<Line> getSupLine()
@@ -360,22 +356,24 @@ public:
 		{
 		case Node::Type::First:
 		{
+			/*float x = P1->getX();
+			float y = P1->getY();*/
 			break;
 		}
 		case Node::Type::Internal:
 		{
 			if (last != nullptr && next != nullptr)
 			{
-				auto last_mid = Line::getMiddlePos(last, main);
-				auto next_mid = Line::getMiddlePos(main, next);
+				auto last_mid = Line::getMiddlePos(last->getMain() , main);
+				auto next_mid = Line::getMiddlePos(main, next->getMain());
 
 				sup1->SetPos(last_mid);
 				sup2->SetPos(next_mid);
 
 				sup_line = std::make_shared<Line>(sup1, sup2);
 
-				auto last_length = Line::getLength(last, main);
-				auto next_length = Line::getLength(main, next);
+				auto last_length = Line::getLength(last->getMain(), main);
+				auto next_length = Line::getLength(main, next->getMain());
 
 				auto relation = last_length / (last_length + next_length);
 

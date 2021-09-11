@@ -162,12 +162,12 @@ void GeometryController::addNode(Node::Type type)
 				type,
 				addPoint(),
 				addSupPoint(),
-				last_node->getMain()
+				last_node
 			);
 		auto new_line = std::make_shared<Line>(last_node->getMain(), new_node->getMain());
 		new_line->setColor(D2D1::ColorF(0.39, 0.96, 0.49));
 		context.lines.emplace_back(new_line);
-		last_node->bindSecond(new_node->getMain());
+		last_node->bindNext(new_node);
 		spline.emplace_back(new_node);
 		MakeBezie();
 		break;
@@ -290,6 +290,6 @@ void GeometryController::addSpline(
 	std::shared_ptr<Point> P3,
 	std::shared_ptr<Point> P4)
 {
-	auto new_spline = std::make_shared<Bezie>(P1, P2, P3, P4);
-	context.bezies.emplace_back(new_spline);
+	auto new_spline = std::make_shared<Bezier>(P1, P2, P3, P4);
+	context.beziers.emplace_back(new_spline);
 }

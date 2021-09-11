@@ -32,7 +32,7 @@ RenderResources& RenderWindow::GetRes()
 {
 	if (!pRes)
 	{
-		MessageBox(nullptr, L"RenderResoucres nullptr", L"NoRes Exception", MB_OK | MB_ICONEXCLAMATION);
+		MessageBox(nullptr, L"RenderResources nullptr", L"NoRes Exception", MB_OK | MB_ICONEXCLAMATION);
 	}
 	return *pRes;
 }

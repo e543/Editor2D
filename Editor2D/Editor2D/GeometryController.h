@@ -13,7 +13,7 @@ public:
 		std::list<std::shared_ptr<Point>> sup_points;
 		std::list<std::shared_ptr<Point>> main_points;
 		std::list<std::shared_ptr<Line>> lines;
-		std::list<std::shared_ptr<Bezie>> bezies;
+		std::list<std::shared_ptr<Bezier>> bezies;
 	};
 private:
 	std::list<std::shared_ptr<Node>> spline;
