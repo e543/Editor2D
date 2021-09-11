@@ -360,8 +360,6 @@ public:
 		{
 		case Node::Type::First:
 		{
-			float x = P1->getX();
-			float y = P1->getY();
 			break;
 		}
 		case Node::Type::Internal:
