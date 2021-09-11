@@ -81,7 +81,7 @@ void RenderResources::Render(GeometryController::RenderContext& context)
 		PAINTSTRUCT ps;
 		BeginPaint(hwnd, &ps);
 		pRenderTarget->BeginDraw();
-		pRenderTarget->Clear(D2D1::ColorF(D2D1::ColorF::White));
+		pRenderTarget->Clear(D2D1::ColorF(0.82, 0.99, 0.93));
 		RenderThunk();
 		hr = pRenderTarget->EndDraw();
 		if (FAILED(hr) || hr == D2DERR_RECREATE_TARGET)

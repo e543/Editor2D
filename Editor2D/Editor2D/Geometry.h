@@ -24,7 +24,7 @@ struct Point : public IDrawable, public ISelectable
 	static constexpr float rad = 5.0f;
 	static constexpr float detection_gap = 10.0f;
 	static constexpr float detection_rad = rad + detection_gap;
-	Point(int x, int y)
+	Point(float x, float y)
 	{
 		ellipse.point.x = x;
 		ellipse.point.y = y;
@@ -87,7 +87,7 @@ struct Line : public IDrawable
 {
 	std::shared_ptr<Point> begin;
 	std::shared_ptr<Point> end;
-	D2D1::ColorF color = D2D1::ColorF::Yellow;
+	D2D1::ColorF color = D2D1::ColorF::Orange;
 	Line(std::shared_ptr<Point> begin, std::shared_ptr<Point> end) : begin(begin), end(end) {};
 
 	void Draw(ID2D1RenderTarget* pRT, ID2D1SolidColorBrush* pBrush) override
@@ -140,6 +140,19 @@ struct Line : public IDrawable
 
 		return std::make_pair(dx, dy);
 	}
+
+	static std::pair<float, float> getDelta(std::pair<float, float> pos_begin, std::pair<float, float> pos_end)
+	{
+		float x1 = pos_begin.first;
+		float y1 = pos_begin.second;
+		float x2 = pos_end.first;
+		float y2 = pos_end.second;
+		float dx = x2 - x1;
+		float dy = y2 - y1;
+
+		return std::make_pair(dx, dy);
+	}
+
 	static float getLength(std::shared_ptr<Point> p1, std::shared_ptr<Point> p2)
 	{
 		auto delta = getDelta(p1, p2);
@@ -149,33 +162,58 @@ struct Line : public IDrawable
 		return sqrtf(dx * dx + dy * dy);
 	}
 
-	void translate(const float offset_x = 0.0f, const float offset_y = 0.0f)
-	{
-		auto this_line = std::make_shared<Line>(*this);
-		translate(this_line, offset_x, offset_y);
-	}
-
-	static std::shared_ptr<Point> getMiddle(std::shared_ptr<Point> p1, std::shared_ptr<Point> p2)
+	static std::pair<float, float> getMiddlePos(std::shared_ptr<Point> p1, std::shared_ptr<Point> p2)
 	{
 		float x1 = p1->getX();
 		float y1 = p1->getY();
 		float x2 = p2->getX();
 		float y2 = p2->getY();
-		float middle_x = (x2 - x1) / 2.0f;
-		float middle_y = (y2 - y1) / 2.0f;
+		float middle_x = (x2 + x1) * 0.5f;
+		float middle_y = (y2 + y1) * 0.5f;
 
-		return std::make_shared<Point>(middle_x, middle_y);
+		return std::make_pair(middle_x, middle_y);
 	}
-	static void translate(std::shared_ptr<Line> line, const float offset_x = 0.0f, const float offset_y = 0.0f)
+
+	static std::pair<float, float> getRelativePos(std::shared_ptr<Point> p1, std::shared_ptr<Point> p2, const float relation)
+	{
+		float x1 = p1->getX();
+		float y1 = p1->getY();
+		float x2 = p2->getX();
+		float y2 = p2->getY();
+		float middle_x = (x2 + x1) * relation;
+		float middle_y = (y2 + y1) * relation;
+
+		return std::make_pair(middle_x, middle_y);
+	}
+
+	static std::pair<float, float> getRelativePos(std::pair<float, float> pos_begin, std::pair<float, float> pos_end, const float relation)
+	{
+		float x1 = pos_begin.first;
+		float y1 = pos_begin.second;
+		float x2 = pos_end.first;
+		float y2 = pos_end.second;
+		float middle_x = x1 + (x2 - x1) * relation;
+		float middle_y = y1 + (y2 - y1) * relation;
+
+		return std::make_pair(middle_x, middle_y);
+	}
+
+	void translate(std::pair<int, int> offset)
+	{
+		auto this_line = std::make_shared<Line>(*this);
+		translate(this_line, offset);
+	}
+
+	static void translate(std::shared_ptr<Line> line, const std::pair<int,int> offset)
 	{
 		auto p1 = line->begin;
 		auto p2 = line->end;
 
-		p1->setX(p1->getX() + offset_x);
-		p1->setY(p1->getY() + offset_y);
+		p1->setX(p1->getX() + offset.first);
+		p1->setY(p1->getY() + offset.second);
 
-		p2->setX(p2->getX() + offset_x);
-		p2->setY(p2->getY() + offset_y);
+		p2->setX(p2->getX() + offset.first);
+		p2->setY(p2->getY() + offset.second);
 	}
 };
 
@@ -230,8 +268,8 @@ public:
 private:
 	Node::Type type;
 	std::shared_ptr<Point> main, sup1, sup2;
-	std::shared_ptr<Point> last,second;
-
+	std::shared_ptr<Point> last,next;
+	std::shared_ptr<Line> sup_line = nullptr;
 public:
 	Node(
 		Node::Type type,
@@ -247,9 +285,13 @@ public:
 	{
 		type = new_type;
 	}
-	void setSecond(std::shared_ptr<Point> second)
+	Node::Type getType()
 	{
-		this->second = second;
+		return type;
+	}
+	void bindSecond(std::shared_ptr<Point> second)
+	{
+		this->next = second;
 	}
 	std::shared_ptr<Point>  getMain() const
 	{
@@ -263,12 +305,52 @@ public:
 	{
 		return sup2;
 	}
-	void setSup1(std::shared_ptr<Point> sup1)
+	void bindLastSup(std::shared_ptr<Point> sup1)
 	{
 		this->sup1 = sup1;
 	}
-	void setSup2(std::shared_ptr<Point> sup2)
+	void bindNextSup(std::shared_ptr<Point> sup2)
 	{
 		this->sup2 = sup2;
 	}
+
+	std::shared_ptr<Line> getSupLine()
+	{		
+		return sup_line;
+	}
+
+
+	void calcSupPoints()
+	{
+		switch (type)
+		{
+		case Node::Type::Internal:
+		{
+			if (last != nullptr && next != nullptr)
+			{
+				auto last_mid = Line::getMiddlePos(last, main);
+				auto next_mid = Line::getMiddlePos(main, next);
+
+				sup1->SetPos(last_mid);
+				sup2->SetPos(next_mid);
+
+				sup_line = std::make_shared<Line>(sup1, sup2);
+
+				auto last_length = Line::getLength(last, main);
+				auto next_length = Line::getLength(main, next);
+
+				auto relation = last_length / (last_length + next_length);
+
+				auto relation_point_pos = Line::getRelativePos(last_mid, next_mid, relation);
+				auto relation_main_offset = Line::getDelta(relation_point_pos,main->GetPos());
+
+				sup_line->translate(relation_main_offset);
+			}
+			break;
+		}
+		default:
+			break;
+		}	
+	}
+
 };

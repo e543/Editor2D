@@ -40,8 +40,9 @@ private:
 	void addLine(int x1, int y1, int x2, int y2);
 	std::shared_ptr<Point> addMainPoint();
 	void addMainPoint(std::shared_ptr<Point> new_main_point);
-	std::shared_ptr<Point> addSupPoint();
 	void addSupPoint(std::shared_ptr<Point> new_sup_point);
+	std::shared_ptr<Point> addSupPoint();
+	std::shared_ptr<Point> addSupPoint(std::pair<int, int> pos);
 
 	// Node Stuff
 	void addNode(Node::Type type);
@@ -59,6 +60,7 @@ private:
 	void dragPoint();
 
 	// Making spline
+	void calcSpline();
 	void MakeBezie();
 	void addSpline(
 		std::shared_ptr<Point> P1,

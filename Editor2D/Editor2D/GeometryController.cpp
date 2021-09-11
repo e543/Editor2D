@@ -115,6 +115,14 @@ std::shared_ptr<Point> GeometryController::addSupPoint()
 	context.sup_points.emplace_back(new_sup_point);
 	return new_sup_point;
 }
+std::shared_ptr<Point> GeometryController::addSupPoint(std::pair<int,int> pos)
+{
+	auto new_sup_point = std::make_shared<Point>(pos.first, pos.second);
+	new_sup_point->SetColor(D2D1::ColorF::Brown);
+	new_sup_point->Lock();
+	context.sup_points.emplace_back(new_sup_point);
+	return new_sup_point;
+}
 
 void GeometryController::addSupPoint(std::shared_ptr<Point> new_sup_point)
 {
@@ -142,7 +150,7 @@ void GeometryController::addNode(Node::Type type)
 		// last duty
 		if (!spline.empty())
 		{
-			last_node->setSup2(addSupPoint());
+			last_node->bindNextSup(addSupPoint(last_node->getMain()->GetPos()));
 			if (spline.size() > 1)
 			{
 				last_node->setType(Node::Type::Internal);
@@ -156,7 +164,7 @@ void GeometryController::addNode(Node::Type type)
 				addSupPoint(),
 				last_node->getMain()
 			);
-		last_node->setSecond(new_node->getMain());
+		last_node->bindSecond(new_node->getMain());
 		spline.emplace_back(new_node);
 		MakeBezie();
 		break;
@@ -230,6 +238,15 @@ void GeometryController::dragPoint()
 	if (last_selected)
 	{
 		last_selected->SetPos(mouse_pos);
+		calcSpline();
+	}
+}
+
+void GeometryController::calcSpline()
+{
+	for (auto riter = spline.rbegin(); riter != spline.rend(); ++riter)
+	{
+		(*riter)->calcSupPoints();
 	}
 }
 
@@ -242,7 +259,11 @@ void GeometryController::MakeBezie()
 	{
 		nodes[count] = static_cast<std::shared_ptr<Node>>(*riter);
 	}
-
+	nodes[1]->calcSupPoints();
+	if (nodes[1]->getType() == Node::Type::Internal)
+	{
+		context.lines.emplace_back(nodes[1]->getSupLine());
+	}
 	addSpline(nodes[0]->getMain(), nodes[0]->getSup1(), nodes[1]->getSup2(), nodes[1]->getMain());
 }
 
