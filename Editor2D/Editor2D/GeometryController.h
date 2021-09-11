@@ -33,7 +33,7 @@ private:
 	std::shared_ptr<Point> getSelectedSupPoint();
 	std::shared_ptr<Point> getSelectedMainPoint();
 	std::shared_ptr<Point> addPoint(int x, int y);
-	void addPoint();
+	std::shared_ptr<Point> addPoint();
 	void addPoint(std::pair<int, int> mouse_pos);
 	void addPoint(std::shared_ptr<Point> new_point);
 	void addLine(std::shared_ptr<Point> begin_point, std::shared_ptr<Point> end_point);
@@ -42,6 +42,9 @@ private:
 	void addMainPoint(std::shared_ptr<Point> new_main_point);
 	std::shared_ptr<Point> addSupPoint();
 	void addSupPoint(std::shared_ptr<Point> new_sup_point);
+
+	// Node Stuff
+	void addNode(Node::Type type);
 
 	// Making Line
 	void StartMakingLine();
@@ -56,7 +59,7 @@ private:
 	void dragPoint();
 
 	// Making spline
-	void MakeSpline();
+	void MakeBezie();
 	void addSpline(
 		std::shared_ptr<Point> P1,
 		std::shared_ptr<Point> P2,

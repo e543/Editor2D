@@ -222,33 +222,53 @@ class Node
 public:
 	enum class Type
 	{
-		Single,
-		Boundary,
+		First,
+		Last,
 		Internal
 	};
 
 private:
 	Node::Type type;
 	std::shared_ptr<Point> main, sup1, sup2;
-	std::shared_ptr<Line> back,front;
+	std::shared_ptr<Point> last,second;
 
 public:
 	Node(
 		Node::Type type,
 		std::shared_ptr<Point> main,
-		std::shared_ptr<Point> sup1,
-		std::shared_ptr<Point> sup2,
-		std::shared_ptr<Line> back,
-		std::shared_ptr<Line> front):
+		std::shared_ptr<Point> sup1 = nullptr,
+		std::shared_ptr<Point> last = nullptr):
 		type(type),
 		main(main),
 		sup1(sup1),
-		sup2(sup2),
-		back(back),
-		front(front)
+		last(last)
 	{}
 	void setType(Node::Type new_type)
 	{
 		type = new_type;
+	}
+	void setSecond(std::shared_ptr<Point> second)
+	{
+		this->second = second;
+	}
+	std::shared_ptr<Point>  getMain() const
+	{
+		return main;
+	}
+	std::shared_ptr<Point>  getSup1() const
+	{
+		return sup1;
+	}
+	std::shared_ptr<Point>  getSup2() const
+	{
+		return sup2;
+	}
+	void setSup1(std::shared_ptr<Point> sup1)
+	{
+		this->sup1 = sup1;
+	}
+	void setSup2(std::shared_ptr<Point> sup2)
+	{
+		this->sup2 = sup2;
 	}
 };

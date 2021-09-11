@@ -59,17 +59,13 @@ void Application::HandleInput()
 		}
 		case Mouse::Event::Type::LPress:
 		{
-			if (main_points.empty())
+			if (gc.spline.empty())
 			{
-				gc.addPoint();
+				gc.addNode(Node::Type::First);
 			}
 			if (!gc.getSelectedSupPoint() && !gc.getSelectedMainPoint())
 			{
-				gc.addPoint();
-				if (!main_points.empty())
-				{
-					gc.MakeSpline();
-				}
+				gc.addNode(Node::Type::Last);
 			}
 
 			gc.StartDraggingPoint();
