@@ -102,11 +102,11 @@ void RenderResources::RenderThunk()
 	for (auto iter = context.bezies.begin(); iter != context.bezies.end(); ++iter)
 		(*iter)->Draw(pRenderTarget, pBrush);
 
-	// Render main_points
-	for (auto iter = context.main_points.begin(); iter != context.main_points.end(); ++iter)
-		(*iter)->Draw(pRenderTarget, pBrush);
-
 	// Render sup_points
 	for (auto iter = context.sup_points.begin(); iter != context.sup_points.end(); ++iter)
+		(*iter)->Draw(pRenderTarget, pBrush);
+
+	// Render main_points
+	for (auto iter = context.main_points.begin(); iter != context.main_points.end(); ++iter)
 		(*iter)->Draw(pRenderTarget, pBrush);
 }

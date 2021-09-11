@@ -107,6 +107,10 @@ struct Line : public IDrawable
 
 		pRT->DrawLine(D2D1::Point2F(begin->getX(), begin->getY()), D2D1::Point2F(end->getX(), end->getY()), pBrush, 2.0f);
 	}
+	void setColor(D2D1::ColorF new_color)
+	{
+		color = new_color;
+	}
 
 	void SetBegin(std::shared_ptr<Point> new_begin)
 	{
@@ -261,6 +265,10 @@ struct Bezie : public IDrawable
 		const float nt = (1.0f - t);
 		return nt * nt * nt * p1 + 3 * nt * nt * t * p2 + 3 * nt * t * t * p3 + t * t * t * p4;
 	}
+	static float bezieDer2()
+	{
+
+	}
 };
 
 class Node
@@ -335,11 +343,14 @@ public:
 		return sup_line;
 	}
 
-
 	void calcSupPoints()
 	{
 		switch (type)
 		{
+		case Node::Type::First:
+		{
+			break;
+		}
 		case Node::Type::Internal:
 		{
 			if (last != nullptr && next != nullptr)
@@ -364,8 +375,11 @@ public:
 			}
 			break;
 		}
-		default:
+		case Node::Type::Last:
+		{
 			break;
+		}
 		}	
+
 	}
 };

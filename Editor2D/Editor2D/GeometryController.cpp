@@ -164,6 +164,9 @@ void GeometryController::addNode(Node::Type type)
 				addSupPoint(),
 				last_node->getMain()
 			);
+		auto new_line = std::make_shared<Line>(last_node->getMain(), new_node->getMain());
+		new_line->setColor(D2D1::ColorF(0.39, 0.96, 0.49));
+		context.lines.emplace_back(new_line);
 		last_node->bindSecond(new_node->getMain());
 		spline.emplace_back(new_node);
 		MakeBezie();
@@ -258,8 +261,6 @@ void GeometryController::dragPoint()
 
 void GeometryController::calcSpline()
 {
-	auto last_riter = spline.rbegin();
-	auto next_riter = spline.rend();
 	for (auto riter = spline.rbegin(); riter != spline.rend(); ++riter)
 	{
 		(*riter)->calcSupPoints();
