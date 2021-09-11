@@ -251,23 +251,34 @@ struct Bezie : public IDrawable
 
 		for (float t = dt; t < 1.0f; t += dt)
 		{
-			float x = func(t, P1->getX(), P2->getX(), P3->getX(), P4->getX());
-			float y = func(t, P1->getY(), P2->getY(), P3->getY(), P4->getY());
+			float x = bezie(t, P1->getX(), P2->getX(), P3->getX(), P4->getX());
+			float y = bezie(t, P1->getY(), P2->getY(), P3->getY(), P4->getY());
 			pRT->DrawLine(D2D1::Point2F(xtemp, ytemp), D2D1::Point2F(x, y), pBrush, 2.0f);
 
 			xtemp = x;
 			ytemp = y;
 		}
 	}
-	inline int func(const float t, int p1, int p2, int p3, int p4)
+	static inline int bezie(const float t, int p1, int p2, int p3, int p4)
 	{
-		//P = (1−t)^3 * P1 + 3(1−t)^2 * t * P2 +3 * (1−t)*t^2*P3 + t^3*P4
+
+		// --------------------------------------------------------------------
+		// The third-order bezier curve function:
+		// P = (1−t)^3 * P1 + 3(1−t)^2 * t * P2 +3 * (1−t)*t^2*P3 + t^3*P4
+		// --------------------------------------------------------------------
+
 		const float nt = (1.0f - t);
 		return nt * nt * nt * p1 + 3 * nt * nt * t * p2 + 3 * nt * t * t * p3 + t * t * t * p4;
 	}
-	static float bezieDer2()
+	static float bezieDer2(const float t, int p1, int p2, int p3, int p4)
 	{
 
+		// --------------------------------------------------------------------
+		// The second derivative of the bezier curve function:
+		// P = 6(1−t) * P1 - 6(2-3t) * P2 + 6(1-3t) * P3 + 6t * P4
+		// --------------------------------------------------------------------
+
+		return 6.0f * (1.0f - t) * p1 - 6.0f * (2.0f - 3.0f * t) * p2 + 6.0f * (1.0f - 3.0f * t) * p3 + 6.0f * t * p4;
 	}
 };
 
@@ -349,6 +360,8 @@ public:
 		{
 		case Node::Type::First:
 		{
+			float x = P1->getX();
+			float y = P1->getY();
 			break;
 		}
 		case Node::Type::Internal:
