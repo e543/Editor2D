@@ -17,13 +17,21 @@ struct ISelectable
 	void Unlock()	{ isLocked = false; }
 };
 
-struct Point : public IDrawable, public ISelectable
+struct IDeletable
+{
+	bool onDelete = false;
+	void Delete() { onDelete = true; }
+	bool OnDelete() { return onDelete; }
+};
+
+class Point : public IDrawable, public ISelectable, public IDeletable
 {
 	D2D1_ELLIPSE ellipse;
 	D2D1::ColorF color = D2D1::ColorF::Black;
 	static constexpr float rad = 5.0f;
 	static constexpr float detection_gap = 10.0f;
 	static constexpr float detection_rad = rad + detection_gap;
+public:
 	Point(float x, float y)
 	{
 		ellipse.point.x = x;
@@ -313,6 +321,14 @@ public:
 	{
 		this->sup2 = sup2;
 	}
+	void setLast(std::shared_ptr<Point> new_last)
+	{
+		last = new_last;
+	}
+	void setNext(std::shared_ptr<Point> new_next)
+	{
+		next = new_next;
+	}
 
 	std::shared_ptr<Line> getSupLine()
 	{		
@@ -352,5 +368,4 @@ public:
 			break;
 		}	
 	}
-
 };

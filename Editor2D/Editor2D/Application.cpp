@@ -63,9 +63,13 @@ void Application::HandleInput()
 			{
 				gc.addNode(Node::Type::First);
 			}
-			if (!gc.getSelectedSupPoint() && !gc.getSelectedMainPoint())
+			if (!gc.getSelectedMainPoint())
 			{
 				gc.addNode(Node::Type::Last);
+			}
+			else
+			{
+				gc.deleteNode();
 			}
 
 			gc.StartDraggingPoint();

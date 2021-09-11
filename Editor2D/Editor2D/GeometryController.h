@@ -23,6 +23,7 @@ private:
 	bool pointIsDragging = false;
 	std::pair<int, int> mouse_pos;
 	std::shared_ptr<Point> last_selected;
+	bool sup_selection_locked = true;
 
 	// Mouse stuff
 	void MousePosChanged(std::pair<int, int> pos);
@@ -46,6 +47,7 @@ private:
 
 	// Node Stuff
 	void addNode(Node::Type type);
+	void deleteNode();
 
 	// Making Line
 	void StartMakingLine();

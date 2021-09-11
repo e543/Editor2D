@@ -51,7 +51,9 @@ void GeometryController::checkSelectedMainPoint()
 
 void GeometryController::MousePosChanged(std::pair<int, int> pos)
 {
-	checkSelectedSupPoint();
+	if (!sup_selection_locked)
+		checkSelectedSupPoint();
+
 	checkSelectedMainPoint();
 	mouse_pos = pos;
 }
@@ -111,7 +113,6 @@ std::shared_ptr<Point> GeometryController::addSupPoint()
 {
 	auto new_sup_point = std::make_shared<Point>(mouse_pos.first, mouse_pos.second);
 	new_sup_point->SetColor(D2D1::ColorF::Brown);
-	new_sup_point->Lock();
 	context.sup_points.emplace_back(new_sup_point);
 	return new_sup_point;
 }
@@ -119,7 +120,6 @@ std::shared_ptr<Point> GeometryController::addSupPoint(std::pair<int,int> pos)
 {
 	auto new_sup_point = std::make_shared<Point>(pos.first, pos.second);
 	new_sup_point->SetColor(D2D1::ColorF::Brown);
-	new_sup_point->Lock();
 	context.sup_points.emplace_back(new_sup_point);
 	return new_sup_point;
 }
@@ -173,6 +173,12 @@ void GeometryController::addNode(Node::Type type)
 
 }
 
+void GeometryController::deleteNode()
+{
+	if(last_selected)
+		last_selected->Delete();
+}
+
 
 
 void GeometryController::StartMakingLine()
@@ -215,8 +221,16 @@ void GeometryController::StopDraggingPoint()
 
 void GeometryController::StartDraggingPoint()
 {
-	auto selected = getSelectedSupPoint();
-	last_selected = selected ? selected : getSelectedMainPoint();
+	std::shared_ptr<Point> selected;
+	if (!sup_selection_locked)
+	{
+	     selected = getSelectedSupPoint();
+		 last_selected = selected ? selected : getSelectedMainPoint();
+	}
+	else
+	{
+		last_selected = getSelectedMainPoint();
+	}
 	if (last_selected)
 	{
 		pointIsDragging = true;
@@ -244,6 +258,8 @@ void GeometryController::dragPoint()
 
 void GeometryController::calcSpline()
 {
+	auto last_riter = spline.rbegin();
+	auto next_riter = spline.rend();
 	for (auto riter = spline.rbegin(); riter != spline.rend(); ++riter)
 	{
 		(*riter)->calcSupPoints();
@@ -253,7 +269,7 @@ void GeometryController::calcSpline()
 void GeometryController::MakeBezie()
 {
 	auto* nodes = new std::shared_ptr<Node>[2];
-
+	std::reverse_iterator<std::list<std::shared_ptr<Node>>::iterator> iterator;
 	size_t count = 0;
 	for (auto riter = spline.rbegin(); count < 2; ++count, ++riter)
 	{
