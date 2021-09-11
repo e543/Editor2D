@@ -217,7 +217,38 @@ struct Bezie : public IDrawable
 	}
 };
 
-struct Spline
+class Node
 {
-	
+public:
+	enum class Type
+	{
+		Single,
+		Boundary,
+		Internal
+	};
+
+private:
+	Node::Type type;
+	std::shared_ptr<Point> main, sup1, sup2;
+	std::shared_ptr<Line> back,front;
+
+public:
+	Node(
+		Node::Type type,
+		std::shared_ptr<Point> main,
+		std::shared_ptr<Point> sup1,
+		std::shared_ptr<Point> sup2,
+		std::shared_ptr<Line> back,
+		std::shared_ptr<Line> front):
+		type(type),
+		main(main),
+		sup1(sup1),
+		sup2(sup2),
+		back(back),
+		front(front)
+	{}
+	void setType(Node::Type new_type)
+	{
+		type = new_type;
+	}
 };

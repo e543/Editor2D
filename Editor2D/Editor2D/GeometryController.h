@@ -16,6 +16,7 @@ public:
 		std::list<std::shared_ptr<Bezie>> bezies;
 	};
 private:
+	std::list<std::shared_ptr<Node>> spline;
 	RenderContext context;
 	bool lineChain = true;
 	bool lineIsDrawing = false;
