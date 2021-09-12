@@ -275,12 +275,14 @@ struct Bezier : public IDrawable
 
 		// --------------------------------------------------------------------
 		// 
-		// The second derivative of the bezier curve function:
+		// The second derivative of the third-order bezier curve function:
 		// P = 6(1−t) * P1 - 6(2-3t) * P2 + 6(1-3t) * P3 + 6t * P4
 		// 
 		// if P = 0 :
 		// P2 = ((1-t) * P1 + (1-3t) * P3 + t * P4) / (2-3t)
 		//
+		// Actually if  t = 0 then result equal  middle point between p1 and p3.
+		// 
 		// --------------------------------------------------------------------
 
 		return ((1-t) * p1 + (1-3*t) * p3 + t * p4) / (2 - 3*t);
@@ -290,12 +292,14 @@ struct Bezier : public IDrawable
 
 		// --------------------------------------------------------------------
 		// 
-		// The second derivative of the bezier curve function:
+		// The second derivative of the third-order bezier curve function:
 		// P = 6(1−t) * P1 - 6(2-3t) * P2 + 6(1-3t) * P3 + 6t * P4
 		// 
 		// if P = 0 :
 		// P3 = ((2-3*t) * P2 - (1-t) * P1 - t * P4) / (1-3t)
-		//
+		// 
+		// Actually if  t = 1 then result equal  middle point between p2 and p4.
+		// 
 		// --------------------------------------------------------------------
 
 		return ((2 - 3 * t) * p2 - (1 - t) * p1 - t * p4) / (1 - 3 * t);
