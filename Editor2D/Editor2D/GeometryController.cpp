@@ -149,14 +149,14 @@ void GeometryController::addNode(Node::Type type)
 		auto last_node = spline.back();
 
 		// last duty
-		if (!spline.empty())
+		if (!isNewSpline())
 		{
 			last_node->bindNextSup(addSupPoint(last_node->getMain()->GetPos()));
-			if (spline.size() == 1)
+			if (last_node->getType() == Node::Type::Single)
 			{
 				last_node->setType(Node::Type::First);
 			} 
-			else if (spline.size() > 1)
+			else 
 			{
 				last_node->setType(Node::Type::Internal);
 			}
@@ -215,7 +215,6 @@ void GeometryController::StartMakingLine()
 
 void GeometryController::ResizeLine()
 {
-
 	auto point = context.main_points.back();
 	point->SetPos(mouse_pos);
 	auto line = context.lines.back();
@@ -267,6 +266,20 @@ void GeometryController::dragPoint()
 		last_selected->SetPos(mouse_pos);
 		calcSpline();
 	}
+}
+
+bool GeometryController::isNewSpline()
+{
+	return newSpline;
+}
+
+void GeometryController::OnNewSpline()
+{
+	newSpline = true;
+}
+void GeometryController::continueSpline()
+{
+	newSpline = false;
 }
 
 void GeometryController::calcSpline()

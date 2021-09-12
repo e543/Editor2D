@@ -24,6 +24,20 @@ void Mouse::OnLeftReleased()
 	TrimBuffer();
 }
 
+void Mouse::OnRightPressed()
+{
+	rightIsPressed = true;
+	buffer.push(Mouse::Event(Mouse::Event::Type::RPress, *this));
+	TrimBuffer();
+}
+
+void Mouse::OnRightReleased()
+{
+	rightIsPressed = false;
+	buffer.push(Mouse::Event(Mouse::Event::Type::RRelease, *this));
+	TrimBuffer();
+}
+
 void Mouse::TrimBuffer()
 {
 	while (buffer.size() > bufferSize)
@@ -46,5 +60,10 @@ std::optional<Mouse::Event> Mouse::Read()
 bool Mouse::LeftIsPressed() const
 {
 	return leftIsPressed;
+}
+
+bool Mouse::RightIsPressed() const
+{
+	return rightIsPressed;
 }
 

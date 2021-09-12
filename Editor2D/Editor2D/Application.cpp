@@ -54,10 +54,12 @@ void Application::HandleInput()
 		}
 		case Mouse::Event::Type::LPress:
 		{
-			if (gc.spline.empty())
+			if (gc.isNewSpline())
 			{
 				gc.addNode(Node::Type::Single);
+				gc.continueSpline();
 			}
+			else
 			if (!gc.getSelectedMainPoint())
 			{
 				gc.addNode(Node::Type::Last);
@@ -76,6 +78,10 @@ void Application::HandleInput()
 			gc.StopDraggingPoint();
 
 			break;
+		}
+		case Mouse::Event::Type::RPress:
+		{
+			gc.OnNewSpline();
 		}
 		}
 	}

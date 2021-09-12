@@ -25,6 +25,7 @@ private:
 	std::pair<int, int> mouse_pos;
 	std::shared_ptr<Point> last_selected;
 	bool sup_selection_locked = true;
+	bool newSpline = true;
 
 	// Mouse stuff:
 	void MousePosChanged(std::pair<int, int> pos);
@@ -63,6 +64,9 @@ private:
 	void dragPoint();
 
 	// Making spline:
+	bool isNewSpline();
+	void OnNewSpline();
+	void continueSpline();
 	void calcSpline();
 	void MakeBezie();
 	void addSpline(

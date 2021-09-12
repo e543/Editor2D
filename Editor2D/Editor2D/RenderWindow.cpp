@@ -75,6 +75,18 @@ LRESULT RenderWindow::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
 		ReleaseCapture();
 		return S_OK;
 	}
+	case WM_RBUTTONDOWN:
+	{
+		mouse.OnRightPressed();
+		SetCapture(m_hwnd);
+		return S_OK;
+	}
+	case WM_RBUTTONUP:
+	{
+		mouse.OnRightReleased();
+		ReleaseCapture();
+		return S_OK;
+	}
 	default:;
 	}
 	return DefWindowProc(m_hwnd, uMsg, wParam, lParam);
