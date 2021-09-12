@@ -13,9 +13,10 @@ public:
 		std::list<std::shared_ptr<Point>> sup_points;
 		std::list<std::shared_ptr<Point>> main_points;
 		std::list<std::shared_ptr<Line>> lines;
-		std::list<std::shared_ptr<Bezier>> bezies;
+		std::list<std::shared_ptr<Bezier>> beziers;
 	};
 private:
+	// General declares:
 	std::list<std::shared_ptr<Node>> spline;
 	RenderContext context;
 	bool lineChain = true;
@@ -25,10 +26,10 @@ private:
 	std::shared_ptr<Point> last_selected;
 	bool sup_selection_locked = true;
 
-	// Mouse stuff
+	// Mouse stuff:
 	void MousePosChanged(std::pair<int, int> pos);
 
-	// Point stuff
+	// Point stuff:
 	void checkSelectedSupPoint();
 	void checkSelectedMainPoint();
 	std::shared_ptr<Point> getSelectedSupPoint();
@@ -45,23 +46,23 @@ private:
 	std::shared_ptr<Point> addSupPoint();
 	std::shared_ptr<Point> addSupPoint(std::pair<int, int> pos);
 
-	// Node Stuff
+	// Node Stuff:
 	void addNode(Node::Type type);
 	void deleteNode();
 
-	// Making Line
+	// Making Line:
 	void StartMakingLine();
 	void ResizeLine();
 	void EndMakingLine();
 	bool OnDrawingLine();
 
-	// Dragging point
+	// Dragging point:
 	void StartDraggingPoint();
 	bool OnDraggingPoint();
 	void StopDraggingPoint();
 	void dragPoint();
 
-	// Making spline
+	// Making spline:
 	void calcSpline();
 	void MakeBezie();
 	void addSpline(

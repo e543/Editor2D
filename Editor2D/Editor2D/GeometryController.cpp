@@ -137,9 +137,10 @@ void GeometryController::addNode(Node::Type type)
 
 	switch (type)
 	{
-	case Node::Type::First:
+	case Node::Type::Single:
 	{
 		new_node = std::make_shared<Node>(type, addPoint());
+
 		spline.emplace_back(new_node);
 		break;
 	}
@@ -151,7 +152,11 @@ void GeometryController::addNode(Node::Type type)
 		if (!spline.empty())
 		{
 			last_node->bindNextSup(addSupPoint(last_node->getMain()->GetPos()));
-			if (spline.size() > 1)
+			if (spline.size() == 1)
+			{
+				last_node->setType(Node::Type::First);
+			} 
+			else if (spline.size() > 1)
 			{
 				last_node->setType(Node::Type::Internal);
 			}
@@ -164,12 +169,17 @@ void GeometryController::addNode(Node::Type type)
 				addSupPoint(),
 				last_node
 			);
-		auto new_line = std::make_shared<Line>(last_node->getMain(), new_node->getMain());
-		new_line->setColor(D2D1::ColorF(0.39, 0.96, 0.49));
-		context.lines.emplace_back(new_line);
+
+
+		auto new_chain_line = std::make_shared<Line>(last_node->getMain(), new_node->getMain());
+		new_chain_line->setColor(D2D1::ColorF(0.39, 0.96, 0.49));
+		context.lines.emplace_back(new_chain_line);
+
 		last_node->bindNext(new_node);
 		spline.emplace_back(new_node);
+
 		MakeBezie();
+
 		break;
 	}
 	}
@@ -270,18 +280,19 @@ void GeometryController::calcSpline()
 void GeometryController::MakeBezie()
 {
 	auto* nodes = new std::shared_ptr<Node>[2];
-	std::reverse_iterator<std::list<std::shared_ptr<Node>>::iterator> iterator;
 	size_t count = 0;
 	for (auto riter = spline.rbegin(); count < 2; ++count, ++riter)
 	{
 		nodes[count] = static_cast<std::shared_ptr<Node>>(*riter);
 	}
+
 	nodes[1]->calcSupPoints();
 	if (nodes[1]->getType() == Node::Type::Internal)
 	{
 		context.lines.emplace_back(nodes[1]->getSupLine());
 	}
 	addSpline(nodes[0]->getMain(), nodes[0]->getSup1(), nodes[1]->getSup2(), nodes[1]->getMain());
+	calcSpline();
 }
 
 void GeometryController::addSpline(
