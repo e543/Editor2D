@@ -27,6 +27,7 @@
     <ClInclude Include="Mouse.h" />
     <ClInclude Include="RenderResources.h" />
     <ClInclude Include="RenderWindow.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="Settings.h" />
   </ItemGroup>
   <ItemGroup>
@@ -37,6 +38,12 @@
     <ClCompile Include="Mouse.cpp" />
     <ClCompile Include="RenderResources.cpp" />
     <ClCompile Include="RenderWindow.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Editor2D.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="bezier-spline.ico" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
