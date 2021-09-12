@@ -56,7 +56,7 @@ void Application::HandleInput()
 		{
 			if (gc.spline.empty())
 			{
-				gc.addNode(Node::Type::First);
+				gc.addNode(Node::Type::Single);
 			}
 			if (!gc.getSelectedMainPoint())
 			{

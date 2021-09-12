@@ -270,15 +270,35 @@ struct Bezier : public IDrawable
 		const float nt = (1.0f - t);
 		return nt * nt * nt * p1 + 3 * nt * nt * t * p2 + 3 * nt * t * t * p3 + t * t * t * p4;
 	}
-	static float bezierDer2(const float t, int p1, int p2, int p3, int p4)
+	static float bezierFirstDer2Zero(const float t, int p1, int p3, int p4)
 	{
 
 		// --------------------------------------------------------------------
+		// 
 		// The second derivative of the bezier curve function:
 		// P = 6(1−t) * P1 - 6(2-3t) * P2 + 6(1-3t) * P3 + 6t * P4
+		// 
+		// if P = 0 :
+		// P2 = ((1-t) * P1 + (1-3t) * P3 + t * P4) / (2-3t)
+		//
 		// --------------------------------------------------------------------
 
-		return 6.0f * (1.0f - t) * p1 - 6.0f * (2.0f - 3.0f * t) * p2 + 6.0f * (1.0f - 3.0f * t) * p3 + 6.0f * t * p4;
+		return ((1-t) * p1 + (1-3*t) * p3 + t * p4) / (2 - 3*t);
+	}
+	static float bezierLastDer2Zero(const float t, int p1, int p2, int p4)
+	{
+
+		// --------------------------------------------------------------------
+		// 
+		// The second derivative of the bezier curve function:
+		// P = 6(1−t) * P1 - 6(2-3t) * P2 + 6(1-3t) * P3 + 6t * P4
+		// 
+		// if P = 0 :
+		// P3 = ((2-3*t) * P2 - (1-t) * P1 - t * P4) / (1-3t)
+		//
+		// --------------------------------------------------------------------
+
+		return ((2 - 3 * t) * p2 - (1 - t) * p1 - t * p4) / (1 - 3 * t);
 	}
 };
 
@@ -287,6 +307,7 @@ class Node
 public:
 	enum class Type
 	{
+		Single,
 		First,
 		Last,
 		Internal
@@ -356,8 +377,11 @@ public:
 		{
 		case Node::Type::First:
 		{
-			/*float x = P1->getX();
-			float y = P1->getY();*/
+			const float x = Bezier::bezierFirstDer2Zero(0,main->getX(), next->getSup1()->getX(), next->getMain()->getX());
+			const float y = Bezier::bezierFirstDer2Zero(0,main->getY(), next->getSup1()->getY(), next->getMain()->getY());
+			sup2->setX(x);
+			sup2->setY(y);
+
 			break;
 		}
 		case Node::Type::Internal:
@@ -386,8 +410,15 @@ public:
 		}
 		case Node::Type::Last:
 		{
+			const float x = Bezier::bezierLastDer2Zero(1,last->getMain()->getX(), last->getSup2()->getX(), main->getX());
+			const float y = Bezier::bezierLastDer2Zero(1,last->getMain()->getY(), last->getSup2()->getY(), main->getY());
+			sup1->setX(x);
+			sup1->setY(y);
+
 			break;
 		}
+		default:
+			break;
 		}	
 
 	}
