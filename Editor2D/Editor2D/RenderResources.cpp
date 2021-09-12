@@ -81,7 +81,7 @@ void RenderResources::Render(GeometryController::RenderContext& context)
 		PAINTSTRUCT ps;
 		BeginPaint(hwnd, &ps);
 		pRenderTarget->BeginDraw();
-		pRenderTarget->Clear(D2D1::ColorF(D2D1::ColorF::White));
+		pRenderTarget->Clear(D2D1::ColorF(0.82, 0.99, 0.93));
 		RenderThunk();
 		hr = pRenderTarget->EndDraw();
 		if (FAILED(hr) || hr == D2DERR_RECREATE_TARGET)
@@ -99,14 +99,14 @@ void RenderResources::RenderThunk()
 		(*iter)->Draw(pRenderTarget, pBrush);
 
 	// Render splines
-	for (auto iter = context.bezies.begin(); iter != context.bezies.end(); ++iter)
-		(*iter)->Draw(pRenderTarget, pBrush);
-
-	// Render main_points
-	for (auto iter = context.main_points.begin(); iter != context.main_points.end(); ++iter)
+	for (auto iter = context.beziers.begin(); iter != context.beziers.end(); ++iter)
 		(*iter)->Draw(pRenderTarget, pBrush);
 
 	// Render sup_points
 	for (auto iter = context.sup_points.begin(); iter != context.sup_points.end(); ++iter)
+		(*iter)->Draw(pRenderTarget, pBrush);
+
+	// Render main_points
+	for (auto iter = context.main_points.begin(); iter != context.main_points.end(); ++iter)
 		(*iter)->Draw(pRenderTarget, pBrush);
 }

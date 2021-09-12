@@ -51,7 +51,9 @@ void GeometryController::checkSelectedMainPoint()
 
 void GeometryController::MousePosChanged(std::pair<int, int> pos)
 {
-	checkSelectedSupPoint();
+	if (!sup_selection_locked)
+		checkSelectedSupPoint();
+
 	checkSelectedMainPoint();
 	mouse_pos = pos;
 }
@@ -63,10 +65,12 @@ std::shared_ptr<Point> GeometryController::addPoint(int x, int y)
 	context.main_points.emplace_back(new_point);
 	return new_point;
 }
-void GeometryController::addPoint()
+
+std::shared_ptr<Point> GeometryController::addPoint()
 {
 	auto new_point = std::make_shared<Point>(mouse_pos.first, mouse_pos.second);
 	context.main_points.emplace_back(new_point);
+	return new_point;
 }
 void GeometryController::addPoint(std::pair<int, int> pos)
 {
@@ -109,7 +113,13 @@ std::shared_ptr<Point> GeometryController::addSupPoint()
 {
 	auto new_sup_point = std::make_shared<Point>(mouse_pos.first, mouse_pos.second);
 	new_sup_point->SetColor(D2D1::ColorF::Brown);
-	//new_sup_point->Lock();
+	context.sup_points.emplace_back(new_sup_point);
+	return new_sup_point;
+}
+std::shared_ptr<Point> GeometryController::addSupPoint(std::pair<int,int> pos)
+{
+	auto new_sup_point = std::make_shared<Point>(pos.first, pos.second);
+	new_sup_point->SetColor(D2D1::ColorF::Brown);
 	context.sup_points.emplace_back(new_sup_point);
 	return new_sup_point;
 }
@@ -117,8 +127,59 @@ std::shared_ptr<Point> GeometryController::addSupPoint()
 void GeometryController::addSupPoint(std::shared_ptr<Point> new_sup_point)
 {
 	new_sup_point->SetColor(D2D1::ColorF::Brown);
-	//new_sup_point->Lock();
+	new_sup_point->Lock();
 	context.sup_points.emplace_back(new_sup_point);
+}
+
+void GeometryController::addNode(Node::Type type)
+{
+	std::shared_ptr<Node> new_node;
+
+	switch (type)
+	{
+	case Node::Type::First:
+	{
+		new_node = std::make_shared<Node>(type, addPoint());
+		spline.emplace_back(new_node);
+		break;
+	}
+	case Node::Type::Last:
+	{
+		auto last_node = spline.back();
+
+		// last duty
+		if (!spline.empty())
+		{
+			last_node->bindNextSup(addSupPoint(last_node->getMain()->GetPos()));
+			if (spline.size() > 1)
+			{
+				last_node->setType(Node::Type::Internal);
+			}
+		}
+
+		new_node = std::make_shared<Node>
+			(
+				type,
+				addPoint(),
+				addSupPoint(),
+				last_node
+			);
+		auto new_line = std::make_shared<Line>(last_node->getMain(), new_node->getMain());
+		new_line->setColor(D2D1::ColorF(0.39, 0.96, 0.49));
+		context.lines.emplace_back(new_line);
+		last_node->bindNext(new_node);
+		spline.emplace_back(new_node);
+		MakeBezie();
+		break;
+	}
+	}
+
+}
+
+void GeometryController::deleteNode()
+{
+	if(last_selected)
+		last_selected->Delete();
 }
 
 
@@ -163,8 +224,16 @@ void GeometryController::StopDraggingPoint()
 
 void GeometryController::StartDraggingPoint()
 {
-	auto selected = getSelectedSupPoint();
-	last_selected = selected ? selected : getSelectedMainPoint();
+	std::shared_ptr<Point> selected;
+	if (!sup_selection_locked)
+	{
+	     selected = getSelectedSupPoint();
+		 last_selected = selected ? selected : getSelectedMainPoint();
+	}
+	else
+	{
+		last_selected = getSelectedMainPoint();
+	}
 	if (last_selected)
 	{
 		pointIsDragging = true;
@@ -186,27 +255,33 @@ void GeometryController::dragPoint()
 	if (last_selected)
 	{
 		last_selected->SetPos(mouse_pos);
+		calcSpline();
 	}
 }
 
-void GeometryController::MakeSpline()
+void GeometryController::calcSpline()
 {
-	auto* ps = new std::shared_ptr<Point>[4];
-
-	size_t count = 0;
-	for (auto riter = context.main_points.rbegin(); count < 2; ++count, ++riter)
+	for (auto riter = spline.rbegin(); riter != spline.rend(); ++riter)
 	{
-		ps[count] = static_cast<std::shared_ptr<Point>>(*riter);
+		(*riter)->calcSupPoints();
 	}
+}
 
-	auto ps00 = std::make_shared<Point>(ps[0]->getX(), ps[0]->getY());
-	auto ps11 = std::make_shared<Point>(ps[1]->getX(), ps[1]->getY());
-	addSupPoint(ps00);
-	ps[2] = ps00;
-	addSupPoint(ps11);
-	ps[3] = ps11;
-
-	addSpline(ps[0], ps[2], ps[3], ps[1]);
+void GeometryController::MakeBezie()
+{
+	auto* nodes = new std::shared_ptr<Node>[2];
+	std::reverse_iterator<std::list<std::shared_ptr<Node>>::iterator> iterator;
+	size_t count = 0;
+	for (auto riter = spline.rbegin(); count < 2; ++count, ++riter)
+	{
+		nodes[count] = static_cast<std::shared_ptr<Node>>(*riter);
+	}
+	nodes[1]->calcSupPoints();
+	if (nodes[1]->getType() == Node::Type::Internal)
+	{
+		context.lines.emplace_back(nodes[1]->getSupLine());
+	}
+	addSpline(nodes[0]->getMain(), nodes[0]->getSup1(), nodes[1]->getSup2(), nodes[1]->getMain());
 }
 
 void GeometryController::addSpline(
@@ -215,6 +290,6 @@ void GeometryController::addSpline(
 	std::shared_ptr<Point> P3,
 	std::shared_ptr<Point> P4)
 {
-	auto new_spline = std::make_shared<Bezie>(P1, P2, P3, P4);
-	context.bezies.emplace_back(new_spline);
+	auto new_spline = std::make_shared<Bezier>(P1, P2, P3, P4);
+	context.beziers.emplace_back(new_spline);
 }

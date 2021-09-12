@@ -12,7 +12,6 @@ class Application
 	void DoFrame();
 public:
 	Application();
-	~Application();
 	int Go();
 };
 
