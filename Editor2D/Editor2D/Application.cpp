@@ -31,10 +31,6 @@ void Application::HandleInput()
 {
 	while (const auto e = rwnd.mouse.Read())
 	{
-		const auto& sup_points = gc.context.sup_points;
-		const auto& main_points = gc.context.main_points;
-		const auto& lines = gc.context.lines;
-		const auto& splines = gc.context.beziers;
 
 
 		switch (e->GetType())
@@ -83,6 +79,20 @@ void Application::HandleInput()
 		{
 			gc.OnNewSpline();
 		}
+		}
+	}
+
+	while (const auto e = rwnd.kbd.ReadKey())
+	{
+		switch (e->GetCode())
+		{
+		case VK_SPACE:
+			if (e->IsPress())
+			{
+				gc.context.changeSupVisible();
+				gc.context.changeLinesVisible();
+			}
+			break;
 		}
 	}
 }

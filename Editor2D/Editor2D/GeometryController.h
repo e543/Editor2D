@@ -14,6 +14,16 @@ public:
 		std::list<std::shared_ptr<Point>> main_points;
 		std::list<std::shared_ptr<Line>> lines;
 		std::list<std::shared_ptr<Bezier>> beziers;
+		bool supVisible = true;
+		bool linesVisible = true;
+		void changeSupVisible()
+		{
+			supVisible = supVisible ? false : true;
+		}
+		void changeLinesVisible()
+		{
+			linesVisible = linesVisible ? false : true;
+		}
 	};
 private:
 	// General declares:

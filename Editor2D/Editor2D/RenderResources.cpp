@@ -95,16 +95,22 @@ void RenderResources::Render(GeometryController::RenderContext& context)
 void RenderResources::RenderThunk()
 {
 	// Render lines
-	for (auto iter = context.lines.begin(); iter != context.lines.end(); ++iter)
-		(*iter)->Draw(pRenderTarget, pBrush);
+	if (context.linesVisible)
+	{
+		for (auto iter = context.lines.begin(); iter != context.lines.end(); ++iter)
+			(*iter)->Draw(pRenderTarget, pBrush);
+	}
 
 	// Render beziers
 	for (auto iter = context.beziers.begin(); iter != context.beziers.end(); ++iter)
 		(*iter)->Draw(pRenderTarget, pBrush);
 
 	// Render sup_points
-	for (auto iter = context.sup_points.begin(); iter != context.sup_points.end(); ++iter)
-		(*iter)->Draw(pRenderTarget, pBrush);
+	if (context.supVisible)
+	{
+		for (auto iter = context.sup_points.begin(); iter != context.sup_points.end(); ++iter)
+			(*iter)->Draw(pRenderTarget, pBrush);
+	}
 
 	// Render main_points
 	for (auto iter = context.main_points.begin(); iter != context.main_points.end(); ++iter)
