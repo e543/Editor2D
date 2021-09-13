@@ -16,6 +16,7 @@ public:
 		std::list<std::shared_ptr<Bezier>> beziers;
 		bool supVisible = true;
 		bool linesVisible = true;
+		bool mainVisible = true;
 		void changeSupVisible()
 		{
 			supVisible = supVisible ? false : true;
@@ -23,6 +24,10 @@ public:
 		void changeLinesVisible()
 		{
 			linesVisible = linesVisible ? false : true;
+		}
+		void changeMainVisible()
+		{
+			mainVisible = mainVisible ? false : true;
 		}
 	};
 private:

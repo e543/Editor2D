@@ -113,6 +113,9 @@ void RenderResources::RenderThunk()
 	}
 
 	// Render main_points
-	for (auto iter = context.main_points.begin(); iter != context.main_points.end(); ++iter)
-		(*iter)->Draw(pRenderTarget, pBrush);
+	if (context.mainVisible)
+	{
+		for (auto iter = context.main_points.begin(); iter != context.main_points.end(); ++iter)
+			(*iter)->Draw(pRenderTarget, pBrush);
+	}
 }
