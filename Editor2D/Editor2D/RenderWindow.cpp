@@ -75,6 +75,32 @@ LRESULT RenderWindow::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
 		ReleaseCapture();
 		return S_OK;
 	}
+	case WM_RBUTTONDOWN:
+	{
+		mouse.OnRightPressed();
+		SetCapture(m_hwnd);
+		return S_OK;
+	}
+	case WM_RBUTTONUP:
+	{
+		mouse.OnRightReleased();
+		ReleaseCapture();
+		return S_OK;
+	}
+	case WM_KEYDOWN:
+	case WM_SYSKEYDOWN: 
+		if (!(lParam & 0x40000000))
+		{
+			kbd.OnKeyPressed(static_cast<unsigned char>(wParam));
+		}
+		break;
+	case WM_KEYUP:
+	case WM_SYSKEYUP:
+		kbd.OnKeyReleased(static_cast<unsigned char>(wParam));
+		break;
+	case WM_CHAR:
+		kbd.OnChar(static_cast<unsigned char>(wParam));
+		break;
 	default:;
 	}
 	return DefWindowProc(m_hwnd, uMsg, wParam, lParam);

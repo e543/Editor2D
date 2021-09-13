@@ -52,12 +52,15 @@ private:
 	bool rightIsPressed = false;
 	static constexpr unsigned int bufferSize = 16u;
 
-	std::queue<Event> buffer;
+	std::queue<Mouse::Event> buffer;
 	void OnMouseMove(int x, int y);
 	void OnLeftPressed();
 	void OnLeftReleased();
+	void OnRightPressed();
+	void OnRightReleased();
 	void TrimBuffer();
 public:
 	std::optional<Mouse::Event> Read();
 	bool LeftIsPressed() const;
+	bool RightIsPressed() const;
 };

@@ -14,6 +14,16 @@ public:
 		std::list<std::shared_ptr<Point>> main_points;
 		std::list<std::shared_ptr<Line>> lines;
 		std::list<std::shared_ptr<Bezier>> beziers;
+		bool supVisible = true;
+		bool linesVisible = true;
+		void changeSupVisible()
+		{
+			supVisible = supVisible ? false : true;
+		}
+		void changeLinesVisible()
+		{
+			linesVisible = linesVisible ? false : true;
+		}
 	};
 private:
 	// General declares:
@@ -25,6 +35,7 @@ private:
 	std::pair<int, int> mouse_pos;
 	std::shared_ptr<Point> last_selected;
 	bool sup_selection_locked = true;
+	bool newSpline = true;
 
 	// Mouse stuff:
 	void MousePosChanged(std::pair<int, int> pos);
@@ -63,6 +74,9 @@ private:
 	void dragPoint();
 
 	// Making spline:
+	bool isNewSpline();
+	void OnNewSpline();
+	void continueSpline();
 	void calcSpline();
 	void MakeBezie();
 	void addSpline(

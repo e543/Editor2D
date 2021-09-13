@@ -1,5 +1,7 @@
 #pragma once
 #include <windows.h>
+#include "resource.h"
+
 
 template <class DERIVED_TYPE>
 class BaseWindow
@@ -41,13 +43,23 @@ public:
 		HMENU hMenu = 0
 	)
 	{
-		WNDCLASS wc = { 0 };
+		WNDCLASSEX wc = { 0 };
+		wc.cbSize = sizeof(wc);
 		wc.lpfnWndProc = DERIVED_TYPE::WindowProc;
 		wc.hInstance = GetModuleHandle(nullptr);
+		wc.hIcon = static_cast<HICON>(LoadImage(
+			GetModuleHandle(nullptr), MAKEINTRESOURCE(IDI_ICON1),
+			IMAGE_ICON, 32, 32, 0
+		));
+		wc.hCursor = LoadCursor(nullptr, IDC_ARROW);;
+		wc.hbrBackground = nullptr;
+		wc.lpszMenuName = nullptr;
 		wc.lpszClassName = ClassName();
-		wc.hCursor = LoadCursor(nullptr, IDC_ARROW);
-		if (!RegisterClass(&wc))
-			return FALSE;
+		wc.hIconSm = static_cast<HICON>(LoadImage(
+			GetModuleHandle(nullptr), MAKEINTRESOURCE(IDI_ICON1),
+			IMAGE_ICON, 16, 16, 0
+		));
+		RegisterClassEx(&wc);
 
 
 		m_hwnd = CreateWindowEx(

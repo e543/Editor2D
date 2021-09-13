@@ -31,10 +31,6 @@ void Application::HandleInput()
 {
 	while (const auto e = rwnd.mouse.Read())
 	{
-		const auto& sup_points = gc.context.sup_points;
-		const auto& main_points = gc.context.main_points;
-		const auto& lines = gc.context.lines;
-		const auto& splines = gc.context.beziers;
 
 
 		switch (e->GetType())
@@ -54,10 +50,12 @@ void Application::HandleInput()
 		}
 		case Mouse::Event::Type::LPress:
 		{
-			if (gc.spline.empty())
+			if (gc.isNewSpline())
 			{
 				gc.addNode(Node::Type::Single);
+				gc.continueSpline();
 			}
+			else
 			if (!gc.getSelectedMainPoint())
 			{
 				gc.addNode(Node::Type::Last);
@@ -77,6 +75,24 @@ void Application::HandleInput()
 
 			break;
 		}
+		case Mouse::Event::Type::RPress:
+		{
+			gc.OnNewSpline();
+		}
+		}
+	}
+
+	while (const auto e = rwnd.kbd.ReadKey())
+	{
+		switch (e->GetCode())
+		{
+		case VK_SPACE:
+			if (e->IsPress())
+			{
+				gc.context.changeSupVisible();
+				gc.context.changeLinesVisible();
+			}
+			break;
 		}
 	}
 }
