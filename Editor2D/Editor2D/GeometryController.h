@@ -29,8 +29,19 @@ public:
 		{
 			mainVisible = mainVisible ? false : true;
 		}
+		void reset()
+		{
+			sup_points.clear();
+			main_points.clear();
+			lines.clear();
+			beziers.clear();
+			supVisible = true;
+			linesVisible = true;
+			mainVisible = true;
+		}
 	};
 private:
+
 	// General declares:
 	std::list<std::shared_ptr<Node>> spline;
 	RenderContext context;
@@ -41,6 +52,8 @@ private:
 	std::shared_ptr<Point> last_selected;
 	bool sup_selection_locked = true;
 	bool newSpline = true;
+
+	void resetContext();
 
 	// Mouse stuff:
 	void MousePosChanged(std::pair<int, int> pos);

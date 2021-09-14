@@ -93,6 +93,12 @@ void Application::HandleInput()
 				gc.context.changeLinesVisible();
 			}
 			break;
+		case VK_ESCAPE:
+			if (e->IsPress())
+			{
+				gc.resetContext();
+			}
+			break;
 		}
 	}
 }
