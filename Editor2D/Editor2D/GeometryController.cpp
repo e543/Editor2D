@@ -49,6 +49,16 @@ void GeometryController::checkSelectedMainPoint()
 
 
 
+void GeometryController::resetContext()
+{
+	context.reset();
+	lineChain = true;
+	lineIsDrawing = false;
+	pointIsDragging = false;
+	sup_selection_locked = true;
+	newSpline = true;
+}
+
 void GeometryController::MousePosChanged(std::pair<int, int> pos)
 {
 	if (!sup_selection_locked)
