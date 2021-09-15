@@ -5,8 +5,6 @@ RenderResources::RenderResources(HWND hwnd) : hwnd(hwnd)
 {
 	if (OnCreate())
 		CreateGraphicsResources();
-	else
-		RenderResources::~RenderResources();
 }
 RenderResources::~RenderResources()
 {
