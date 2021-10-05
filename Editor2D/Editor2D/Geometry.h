@@ -234,8 +234,9 @@ struct Bezier : public IDrawable
 	const D2D1::ColorF color = D2D1::ColorF::Red;
 
 	std::shared_ptr<Point> P1, P2, P3, P4;
-	static constexpr float N = 100.0f;
-	static constexpr float dt = 1 / N;
+	static constexpr float N = 50.0f;
+	static constexpr float dt = 1.0f / N;
+	static constexpr float limit = dt * N;
 
 	Bezier(
 		std::shared_ptr<Point> P1,
@@ -249,8 +250,8 @@ struct Bezier : public IDrawable
 		float xtemp = P1->getX();
 		float ytemp = P1->getY();
 
-		for (float t = dt; t < 1.0f; t += dt)
-		{
+		for (float t = dt; t <= limit; t += dt)
+		{ 
 			float x = bezier(t, P1->getX(), P2->getX(), P3->getX(), P4->getX());
 			float y = bezier(t, P1->getY(), P2->getY(), P3->getY(), P4->getY());
 			pRT->DrawLine(D2D1::Point2F(xtemp, ytemp), D2D1::Point2F(x, y), pBrush, 2.0f);
@@ -259,7 +260,7 @@ struct Bezier : public IDrawable
 			ytemp = y;
 		}
 	}
-	static inline int bezier(const float t, int p1, int p2, int p3, int p4)
+	float bezier(const float t, int p1, int p2, int p3, int p4)
 	{
 
 		// --------------------------------------------------------------------
